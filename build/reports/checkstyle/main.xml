@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="8.37">
+<file name="/Users/joseph/Desktop/DevOps/jenkinsCourses/my-example-calculator/src/main/java/com/joseph/calculator/Calculator.java">
+</file>
+<file name="/Users/joseph/Desktop/DevOps/jenkinsCourses/my-example-calculator/src/main/java/com/joseph/calculator/CalculatorApplication.java">
+</file>
+<file name="/Users/joseph/Desktop/DevOps/jenkinsCourses/my-example-calculator/src/main/java/com/joseph/calculator/CalculatorController.java">
+</file>
+</checkstyle>
