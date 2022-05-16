@@ -1,0 +1,52 @@
+version: '3.9'
+services:
+  jenkins:
+    build: 
+      context: .
+    restart: on-failure:10
+    container_name: my-jenkins
+    ports:
+      - 8099:8080
+    volumes:
+      - ./app-data/jenkins:/var/jenkins_home
+      - ./app-data/jenkins-docker-certs:/certs/client:ro
+    networks:
+      - jenkins-pipeline
+    environment:
+      - DOCKER_HOST=tcp://docker:2375
+      - DOCKER_CERT_PATH=/certs/client
+      - DOCKER_TLS_VERIFY=1
+
+
+  dind:
+    image: docker:dind
+    container_name: container-dind
+    privileged: true
+    ports:
+      - 2376:2376
+    networks:
+      - jenkins-pipeline
+    volumes:
+      - ./app-data/jenkins-docker-certs:/certs/client
+      - ./app-data/jenkins:/var/jenkins_home
+    environment:
+      - DOCKER_TLS_CERTDIR=/certs
+
+
+  dind-socat:
+    container_name: jenkins-docker
+    image: alpine/socat
+    restart: unless-stopped
+    networks:
+      jenkins-pipeline:
+        aliases:
+          - docker
+    expose:
+      - "2375"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    command: tcp-listen:2375,fork,reuseaddr unix-connect:/var/run/docker.sock
+
+
+networks:
+  jenkins-pipeline:
