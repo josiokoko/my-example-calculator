@@ -51,7 +51,7 @@ services:
   sonarqube:
     image: sonarqube:7.9.2-community
     container_name: sonar-container
-    restart: always
+    restart: unless-stopped
     networks:
       - jenkins-pipeline
     environment:
