@@ -48,38 +48,39 @@ services:
     command: tcp-listen:2375,fork,reuseaddr unix-connect:/var/run/docker.sock
 
 
-  sonarqube:
-    image: sonarqube:7.9.2-community
-    container_name: sonar-container
-    restart: unless-stopped
-    networks:
-      - jenkins-pipeline
-    environment:
-      - SONARQUBE_JDBC_USERNAME=sonar
-      - SONARQUBE_JDBC_PASSWORD=your-strong-password-here
-      - SONARQUBE_JDBC_URL=jdbc:postgresql://postgressdb:5432/sonarqube
-    ports:
-      - "9099:9000"
-      - "9092:9092"
-    volumes:
-      - './app-data/sonar/sonarqube_conf:/opt/sonarqube/conf'
-      - './app-data/sonar/sonarqube_data:/opt/sonarqube/data'
-      - './app-data/sonar/sonarqube_extensions:/opt/sonarqube/extensions'
-      - './app-data/sonar/sonarqube_bundled-plugins:/opt/sonarqube/lib/bundled-plugins'
 
-  postgressdb:
-    image: postgres:12.1
-    container_name: postgres-container
-    restart: always
-    networks:
-      - jenkins-pipeline
+  sonarqube:
+    image: sonarqube
+    container_name: sonarqube
+    depends_on:
+      - db
     environment:
-      - POSTGRES_USER=sonar
-      - POSTGRES_PASSWORD=sonar
-      - POSTGRES_DB=sonarqube
+      SONAR_JDBC_URL: jdbc:postgresql://db:5432/sonar
+      SONAR_JDBC_USERNAME: sonar
+      SONAR_JDBC_PASSWORD: sonar
     volumes:
-      - './app-data/postgresql/sonarqube_db:/var/lib/postgresql'
-      - './app-data/postgresql/postgresql_data:/var/lib/postgresql/data'
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+    ports:
+      - "9888:9000"
+
+  db:
+    image: postgres:12
+    container_name: postgresdb
+    environment:
+      POSTGRES_USER: sonar
+      POSTGRES_PASSWORD: sonar
+    volumes:
+      - postgresql:/var/lib/postgresql
+      - postgresql_data:/var/lib/postgresql/data
+
+volumes:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:
+  postgresql:
+  postgresql_data:
 
 networks:
   jenkins-pipeline:

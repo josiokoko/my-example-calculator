@@ -32,5 +32,17 @@ pipeline {
                 ])
             }
         }
+        stage('SonarQube Code Quality Analysis') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    sh "./gradlew sonarqube"
+                }
+            }
+        }
+        stage("SonarQube Quality Gate") {
+            steps {
+                waitForQualityGate abortPipeline: true
+            }
+        }
     }
 }
