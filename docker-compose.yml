@@ -59,7 +59,7 @@ services:
       - SONARQUBE_JDBC_PASSWORD=your-strong-password-here
       - SONARQUBE_JDBC_URL=jdbc:postgresql://postgressdb:5432/sonarqube
     ports:
-      - "9000:9000"
+      - "9099:9000"
       - "9092:9092"
     volumes:
       - './app-data/sonar/sonarqube_conf:/opt/sonarqube/conf'
